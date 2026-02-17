@@ -4,7 +4,7 @@ Picking Time Simulation
 
 Pipeline:
 1) Load pick data from Excel
-2) Merge layout coordinates from df_part2
+2) Merge layout coordinates from df_part1
 3) Simulate travel + pick time using custom rules
 4) Output per-pick and per-picker timing metrics
 
@@ -24,7 +24,7 @@ import sys
 from pathlib import Path
 
 # ---------------------------------------------------------
-# 0) Import df_part2 from mod_pick.py
+# 0) Import df_part from mod_pick.py
 # ---------------------------------------------------------
 # Add ../picking_area_layouts to Python path
 BASE_DIR = Path(__file__).resolve().parent
@@ -34,7 +34,7 @@ sys.path.insert(0, str(LAYOUT_DIR))
 # Import layout module
 import mod_pick  # noqa: E402
 
-# EXPECTED: df_part2 exists in mod_pick.py
+# EXPECTED: df_part1 exists in mod_pick.py
 df_part1 = mod_pick.df_part1
 
 # ---------------------------------------------------------
@@ -85,14 +85,14 @@ def load_picks_excel(path: str) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------
-# 2) Prepare layout / heatmap data (df_part2)
+# 2) Prepare layout / heatmap data (df_part1)
 # ---------------------------------------------------------
-def prepare_layout_df(df_part2: pd.DataFrame) -> pd.DataFrame:
+def prepare_layout_df(df_part1: pd.DataFrame) -> pd.DataFrame:
     """
     Normalizes layout dataframe and keeps only required columns.
     """
 
-    df = df_part2.copy()
+    df = df_part1.copy()
 
     # Normalize column names
     df.columns = [c.strip() for c in df.columns]
@@ -102,7 +102,7 @@ def prepare_layout_df(df_part2: pd.DataFrame) -> pd.DataFrame:
     }
     missing = required - set(df.columns)
     if missing:
-        raise ValueError(f"df_part2 missing columns: {sorted(missing)}")
+        raise ValueError(f"df_part1 missing columns: {sorted(missing)}")
 
     # Clean join key
     df["location_id"] = df["location_id"].astype(str).str.strip()
@@ -237,4 +237,6 @@ if __name__ == "__main__":
     )
 
     print("\nTotal minutes per picker:")
-    print(totals.sort_values("total_minutes", ascending=False))
+    print(totals.sort_values("total_time", ascending=False))
+    print(totals["total_time"].sum())
+    print(totals["picker_id"].count())

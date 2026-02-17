@@ -8,7 +8,7 @@ from openpyxl import load_workbook
 # CONFIG (EDIT THESE)
 # ============================
 
-EXCEL_PATH = "../Heat Map - Pick Modules.xlsx"  # path to your Excel file
+EXCEL_PATH = "../data/Heat Map - Pick Modules.xlsx"  # path to your Excel file
 BIN_HEIGHT = 3                                  # bins are grouped in 3 cells (vertical OR horizontal)
 
 # Only parse the real grid sheets (prevents tables like "Module Items", etc.)
@@ -321,9 +321,3 @@ def bins_df_to_clean_indexed_df(df: pd.DataFrame, *, validate: bool = True) -> p
     # Set index for fast lookup in your simulation
     df = df.set_index(["pick_module", "floor", "x", "y"]).sort_index()
     return df
-
-
-# Output of Part 2 (this is your final, usable DF)
-df_part2 = bins_df_to_clean_indexed_df(df_part1, validate=True)
-print("\nPart 2 output (head):")
-print(df_part2.head())
